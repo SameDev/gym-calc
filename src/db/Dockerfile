@@ -1,0 +1,5 @@
+FROM postgres:15
+
+ENV POSTGRES_USER=global
+ENV POSTGRES_PASSWORD=global
+ENV POSTGRES_DB=global
