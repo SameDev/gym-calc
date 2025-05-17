@@ -19,6 +19,7 @@ model User {
   data_nascimento  DateTime? @db.Date
   peso             Float?
   sexo             Sexo?
+  idade            Int?
   tipo             Tipo?     @default(USER)
 }
 

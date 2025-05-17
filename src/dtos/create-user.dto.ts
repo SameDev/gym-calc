@@ -34,6 +34,10 @@ export class CreateUserDto {
     altura: number;
 
     @ApiProperty()
+    @IsNumber()
+    idade: number;
+
+    @ApiProperty()
     sexo: Sexo;
 }
 
