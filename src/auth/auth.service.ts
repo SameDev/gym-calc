@@ -3,10 +3,14 @@ import { CreateUserDto } from 'src/dtos/create-user.dto';
 import { PrismaService } from 'src/prisma.service';
 
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private jwtService: JwtService,
+    ) {}
     
     getAllUsers() {
         try {
@@ -46,16 +50,9 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new BadRequestException('Senha inválida');
         }
+        const payload = { id: user.id, username: user.nome, email: user.email };
         return {
-            id: user.id,
-            nome: user.nome,
-            email: user.email,
-            peso: user.peso,
-            altura: user.altura,
-            sexo: user.sexo,
-            data_nascimento: user.data_nascimento,
-            data_cadastro: user.data_cadastro,
-            data_atualizacao: user.data_atualizacao,
+            jwtToken: await this.jwtService.signAsync(payload),
         };
     }
 
@@ -76,8 +73,15 @@ export class AuthService {
         CreateUserDto.data_cadastro = new Date();
         CreateUserDto.data_atualizacao = new Date(); 
 
-        return this.prisma.user.create({
+        const newUser = await this.prisma.user.create({
             data: CreateUserDto,
         });
+
+        const payload = { id: newUser.id, username: newUser.nome, email: newUser.email };
+        return {
+            jwtToken: await this.jwtService.signAsync(payload),
+        };
+
+        
     }
 }
